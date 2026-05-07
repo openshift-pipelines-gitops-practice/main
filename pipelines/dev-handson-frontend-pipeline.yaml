@@ -70,11 +70,11 @@ spec:
             image: registry.access.redhat.com/ubi8/nodejs-18:latest
             workingDir: $(workspaces.source.path)
             script: |
-              npm ci
-              npm test
+              npm install
+              npm run test:unit
 
     # ---------------------------------------------------------
-    # 3. コンテナイメージビルド (S2I Node.js)
+    # 3. コンテナイメージビルド (Buildah)
     # ---------------------------------------------------------
     - name: build-image
       taskRef:
@@ -83,7 +83,7 @@ spec:
           - name: kind
             value: task
           - name: name
-            value: s2i-nodejs
+            value: buildah
           - name: namespace
             value: openshift-pipelines
       runAfter:
@@ -95,7 +95,9 @@ spec:
       params:
         - name: IMAGE
           value: "$(params.image-registry)/$(params.image-namespace)/$(params.app-name):$(params.revision)"
-        - name: TLSVERIFY
+        - name: DOCKERFILE
+          value: ./Dockerfile
+        - name: TLS_VERIFY
           value: "false"
 
     # ---------------------------------------------------------

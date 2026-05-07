@@ -2,19 +2,17 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: dev-handson-app
-  namespace: openshift-gitops
+  namespace: dev-handson-app
 spec:
   project: default
   source:
-    repoURL: "https://github.com/YOUR_ORG/manifest-repo.git"
+    repoURL: "https://github.com/openshift-pipelines-gitops-practice/app-manifests.git"
     targetRevision: main
     path: envs/dev
   destination:
     server: "https://kubernetes.default.svc"
-    namespace: dev-handson
+    namespace: dev-handson-app
   syncPolicy:
     automated:
-      prune: true
+      prune: false
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
