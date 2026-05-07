@@ -67,11 +67,13 @@ spec:
           - name: source
         steps:
           - name: npm-test
-            image: registry.access.redhat.com/ubi8/nodejs-18:latest
+            image: registry.access.redhat.com/ubi9/nodejs-22:latest
             workingDir: $(workspaces.source.path)
             script: |
               npm install
+              npx nuxt prepare
               npm run test:unit
+              rm -rf node_modules .nuxt
 
     # ---------------------------------------------------------
     # 3. コンテナイメージビルド (S2I Node.js)
