@@ -12,7 +12,4 @@ spec:
   destination:
     server: "https://kubernetes.default.svc"
     namespace: dev-handson-app
-  syncPolicy:
-    automated:
-      prune: false
-      selfHeal: true
+  syncPolicy: {}

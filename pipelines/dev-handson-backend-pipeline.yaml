@@ -23,6 +23,10 @@ spec:
       type: string
     - name: app-name
       type: string
+    - name: argocd-app-name
+      type: string
+      default: "dev-handson-app"
+      description: ArgoCD Application 名
   workspaces:
     - name: shared-workspace
     - name: basic-auth
@@ -166,3 +170,24 @@ spec:
             git diff --cached --quiet && echo "No changes to commit" && exit 0
             git commit -m "[CI] Update backend image to $(params.revision)"
             git push origin HEAD:main
+
+    # ---------------------------------------------------------
+    # 6. ArgoCD Sync & Wait
+    # ---------------------------------------------------------
+    - name: sync-argocd
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: argocd-task-sync-and-wait
+          - name: namespace
+            value: openshift-pipelines
+      runAfter:
+        - update-manifest
+      params:
+        - name: application-name
+          value: $(params.argocd-app-name)
+        - name: revision
+          value: HEAD
