@@ -184,3 +184,4 @@ fetch-source → unit-test → build-image → fetch-manifest → update-manifes
 ## 関連ドキュメント
 
 - [セットアップガイド](docs/setup-guide.md) — 環境構築の詳細手順
+- [開発者向けハンズオン](docs/developer-handson.md) — アプリ修正から CI/CD デプロイまでの体験
