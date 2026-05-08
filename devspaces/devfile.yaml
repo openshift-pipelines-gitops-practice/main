@@ -1,0 +1,80 @@
+schemaVersion: 2.2.0
+metadata:
+  name: dev-handson-fullstack
+  displayName: Dev Handson Fullstack Workspace
+  description: Single Dev Spaces workspace for backend and frontend development.
+attributes:
+  controller.devfile.io/storage-type: per-workspace
+projects:
+  - name: backend-app
+    git:
+      remotes:
+        origin: https://github.com/openshift-pipelines-gitops-practice/backend-app.git
+  - name: frontend-app
+    git:
+      remotes:
+        origin: https://github.com/openshift-pipelines-gitops-practice/frontend-app.git
+components:
+  - name: tools
+    container:
+      image: image-registry.openshift-image-registry.svc:5000/openshift/udi-rhel9-java25-node24:latest
+      memoryLimit: 4Gi
+      mountSources: true
+      env:
+        - name: JAVA_HOME
+          value: /usr/lib/jvm/java-25-openjdk
+        - name: API_BASE_URL
+          value: http://localhost:8080
+      endpoints:
+        - name: frontend
+          targetPort: 3000
+          exposure: public
+          protocol: http
+        - name: backend
+          targetPort: 8080
+          exposure: public
+          protocol: http
+commands:
+  - id: install-frontend-deps
+    exec:
+      label: "Install frontend dependencies"
+      component: tools
+      workingDir: /projects/frontend-app
+      commandLine: npm install
+
+  - id: run-backend
+    exec:
+      label: "Run backend (Spring Boot)"
+      component: tools
+      workingDir: /projects/backend-app
+      commandLine: ./mvnw spring-boot:run
+      group:
+        kind: run
+        isDefault: true
+
+  - id: run-frontend
+    exec:
+      label: "Run frontend (Nuxt)"
+      component: tools
+      workingDir: /projects/frontend-app
+      commandLine: npm run dev -- --host 0.0.0.0 --port 3000
+      group:
+        kind: run
+
+  - id: test-backend
+    exec:
+      label: "Test backend"
+      component: tools
+      workingDir: /projects/backend-app
+      commandLine: ./mvnw test
+      group:
+        kind: test
+
+  - id: test-frontend
+    exec:
+      label: "Test frontend"
+      component: tools
+      workingDir: /projects/frontend-app
+      commandLine: npm run test:unit
+      group:
+        kind: test

@@ -32,6 +32,54 @@ oc new-project dev-handson-app
 
 ---
 
+## （オプション）OpenShift Dev Spaces 用ワークスペースイメージのビルド
+
+本リポジトリの `devspaces/Dockerfile` は、`registry.redhat.io/devspaces/udi-rhel9` をベースに **OpenJDK 25** と **Node.js 24** を追加したカスタム Universal Developer Image (UDI) です。Dev Spaces の devfile からこのイメージを参照すると、ハンズオン用 Backend（Java 25）および Frontend（Nuxt）を同一ワークスペースで開発しやすくなります。
+
+ビルド定義は `setup/buildconfig-udi-workspace-image.yaml` にあります。**ImageStream と BuildConfig はいずれも `openshift` Namespace に配置する想定**です。適用・ビルド開始には **クラスタ管理者権限** が必要になることが多いです。
+
+### 編集が必要な項目
+
+| 変更箇所 | 説明 |
+|----------|------|
+| `BuildConfig.spec.source.git.uri` | **メイン教材リポジトリ**（本リポジトリ、`devspaces/Dockerfile` がルート直下にある構成）の HTTPS URL |
+
+Git の clone ルートが **`main/` サブディレクトリだけ**（モノレポなど）の場合は、`spec.source` に `contextDir: main` を追加してください。
+
+ベース UDI のタグをクラスタの Dev Spaces バージョンに合わせて固定したい場合は、`dockerStrategy.buildArgs` の `UDI_TAG` を変更します。
+
+### registry.redhat.io の認証
+
+Docker ビルド時に `registry.redhat.io/devspaces/udi-rhel9` を pull できる必要があります。クラスタ既定で足りない場合は、`openshift` Namespace の **`builder` ServiceAccount** に Red Hat Container Registry 用の pull Secret をリンクします。
+
+```bash
+oc create secret docker-registry redhat-registry-pull-secret \
+  --docker-server=registry.redhat.io \
+  --docker-username='<Red Hat アカウントまたはトークン用ユーザー名>' \
+  --docker-password='<registry 用パスワードまたはトークン>' \
+  -n openshift
+oc secrets link builder redhat-registry-pull-secret --for=pull -n openshift
+```
+
+別の方法として、`BuildConfig.spec.strategy.dockerStrategy.pullSecret` に同じ Secret を指定することもできます。
+
+### 適用とビルド
+
+```bash
+oc apply -f setup/buildconfig-udi-workspace-image.yaml -n openshift
+oc start-build udi-rhel9-java25-node24 -n openshift
+```
+
+ビルド完了後、Internal Registry 上の参照例は次のとおりです（クラスタのレジストリホスト名は環境に合わせて読み替えてください）。
+
+```
+image-registry.openshift-image-registry.svc:5000/openshift/udi-rhel9-java25-node24:latest
+```
+
+Dev Spaces の devfile のコンテナ `image` は、この URL（または外向きレジストリの同等パス）を指定します。ワークスペース Pod が **その Namespace のイメージを pull できること**（既定では認証付き pull が必要な場合があります）を管理者側で確認してください。
+
+---
+
 ## Step 2. PaC 用トークン Secret の作成
 
 Pipeline as Code (PaC) は Webhook の受信やコミットステータスの更新に Git プロバイダの API を使用します。
@@ -354,3 +402,4 @@ oc get route -n dev-handson-app
 | Frontend リポジトリ URL (HTTPS) | `setup/pac-repository-frontend.yaml` | PaC が監視するリポジトリ |
 | Manifest リポジトリ URL (HTTPS) | `argocd/application.yaml` | Argo CD が監視するリポジトリ |
 | Manifest リポジトリ URL (HTTPS) | 各ソースリポジトリの `.tekton/pipelinerun.yaml` | Pipeline が更新するリポジトリ |
+| メイン教材リポジトリ URL (HTTPS) | `setup/buildconfig-udi-workspace-image.yaml` の `spec.source.git.uri` | Dev Spaces 用 UDI ビルドのソース取得（オプション） |

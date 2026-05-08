@@ -1,28 +1,9 @@
-# Dev Spaces 用カスタム UDI イメージ（OpenJDK 25 + Node.js 24）をビルドする BuildConfig。
-#
-# 事前準備:
-# - メインリポジトリの Git URL を spec.source.git.uri に合わせる。
-# - registry.redhat.io からベースイメージを pull するため、builder SA に Red Hat レジストリ用の pull secret をリンクする例:
-#     oc create secret docker-registry redhat-registry-pull-secret \
-#       --docker-server=registry.redhat.io \
-#       --docker-username='$(op whoami)' --docker-password=<token> -n <namespace>
-#     oc secrets link builder redhat-registry-pull-secret --for=pull -n <namespace>
-#
-# 適用:
-#   oc apply -f setup/buildconfig-udi-workspace-image.yaml
-#
-# ビルド開始:
-#   oc start-build udi-rhel9-java25-node24 -n <namespace>
-#
-# Git リポジトリのルートが本リポジトリ（README / pipelines / devspaces が直下）である想定。
-# モノレポなどで main サブディレクトリのみがソースの場合は、BuildConfig の contextDir を main に変更する。
-
 ---
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   name: udi-rhel9-java25-node24
-  namespace: dev-handson
+  namespace: openshift
 spec: {}
 
 ---
@@ -30,7 +11,7 @@ apiVersion: build.openshift.io/v1
 kind: BuildConfig
 metadata:
   name: udi-rhel9-java25-node24
-  namespace: dev-handson
+  namespace: openshift
   labels:
     app: udi-rhel9-java25-node24
 spec:
@@ -41,10 +22,8 @@ spec:
   source:
     type: Git
     git:
-      uri: https://github.com/openshift-pipelines-gitops-practice/main.git
+      uri: https://github.com/YOUR_ORG/openshift-pipelines-gitops-practice.git
       ref: main
-    # メインリポジトリがリポジトリ直下ではなくサブディレクトリにある場合のみ開放して調整する。
-    # contextDir: main
   strategy:
     type: Docker
     dockerStrategy:
@@ -54,18 +33,9 @@ spec:
           value: registry.redhat.io/devspaces/udi-rhel9
         - name: UDI_TAG
           value: latest
-      # Red Hat Container Catalog の認証が必要な場合（クラスタ既定で足りないとき）
-      # pullSecret:
-      #   name: redhat-registry-pull-secret
   output:
     to:
       kind: ImageStreamTag
       name: udi-rhel9-java25-node24:latest
   triggers:
     - type: ConfigChange
-    # ベース UDI を更新したときだけ自動再ビルドしたい場合の例（クラスタがレジストリを監視できるとき）
-    # - type: ImageChange
-    #   imageChange:
-    #     from:
-    #       kind: DockerImage
-    #       name: registry.redhat.io/devspaces/udi-rhel9:latest
