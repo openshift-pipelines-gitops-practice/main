@@ -208,8 +208,7 @@ app-manifests/
 │   ├── kustomization.yaml
 │   ├── backend/
 │   │   ├── deployment.yaml
-│   │   ├── service.yaml
-│   │   └── route.yaml
+│   │   └── service.yaml
 │   └── frontend/
 │       ├── deployment.yaml
 │       ├── service.yaml

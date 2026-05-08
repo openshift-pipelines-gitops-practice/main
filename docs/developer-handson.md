@@ -143,8 +143,7 @@ app-manifests/
 │   ├── kustomization.yaml
 │   ├── backend/
 │   │   ├── deployment.yaml    ← image: dev-handson-backend:latest
-│   │   ├── service.yaml       ← port: 8080
-│   │   └── route.yaml         ← TLS edge termination
+│   │   └── service.yaml       ← port: 8080（クラスタ内からのみ公開）
 │   └── frontend/
 │       ├── deployment.yaml    ← image: dev-handson-frontend:latest
 │       ├── service.yaml       ← port: 3000
