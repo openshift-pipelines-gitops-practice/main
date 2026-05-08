@@ -149,8 +149,11 @@ app-manifests/
 │       ├── deployment.yaml    ← image: dev-handson-frontend:latest
 │       ├── service.yaml       ← port: 3000
 │       └── route.yaml         ← TLS edge termination
-└── envs/dev/
-    └── kustomization.yaml     ← namespace + images の newTag を CI が自動更新
+└── envs/
+    ├── dev/
+    │   └── kustomization.yaml   ← dev 環境（CI がイメージタグを自動更新）
+    └── prod/
+        └── kustomization.yaml   ← prod 環境（レプリカ数・リソース増強）
 ```
 
 `envs/dev/kustomization.yaml` の `images` セクションで、Kustomize が base の Deployment のイメージを上書きします。CI パイプラインはここの `newTag` をコミットハッシュに書き換えて push します。

@@ -215,8 +215,10 @@ app-manifests/
 │       ├── service.yaml
 │       └── route.yaml
 └── envs/
-    └── dev/
-        └── kustomization.yaml   ← CI がイメージタグを自動更新
+    ├── dev/
+    │   └── kustomization.yaml    ← dev 環境（CI がイメージタグを自動更新）
+    └── prod/
+        └── kustomization.yaml    ← prod 環境（レプリカ数・リソース増強）
 ```
 
 ### イメージタグの更新マーカー

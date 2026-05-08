@@ -27,6 +27,23 @@ spec:
       type: string
       default: "dev-handson-app"
       description: ArgoCD Application 名
+    - name: maven-subdirectory
+      type: string
+      default: "."
+      description: クローン先からの Maven プロジェクト相対パス（単体リポジトリは "."、モノレポなら "backend-app" など）
+    - name: use-mvnw
+      type: string
+      default: "true"
+      description: |-
+        既定 true（./mvnw を必須利用）。イメージの mvn にしたいときは "false"
+    - name: s2i-builder-image
+      type: string
+      default: "image-registry.openshift-image-registry.svc:5000/openshift/openjdk-25"
+      description: S2I Java ビルダーイメージ（タグ除く。s2i-java Task の BUILDER_IMAGE）
+    - name: s2i-builder-tag
+      type: string
+      default: "1.24"
+      description: ビルダーイメージのタグ（ImageStream タグ等。s2i-java Task の VERSION）
   workspaces:
     - name: shared-workspace
     - name: basic-auth
@@ -69,7 +86,7 @@ spec:
           - name: name
             value: maven
           - name: namespace
-            value: openshift-pipelines
+            value: dev-handson
       runAfter:
         - fetch-source
       workspaces:
@@ -79,6 +96,10 @@ spec:
         - name: maven_settings
           workspace: maven-settings
       params:
+        - name: SUBDIRECTORY
+          value: $(params.maven-subdirectory)
+        - name: USE_MVNW
+          value: $(params.use-mvnw)
         - name: GOALS
           value:
             - "-B"
@@ -96,7 +117,7 @@ spec:
           - name: name
             value: s2i-java
           - name: namespace
-            value: openshift-pipelines
+            value: dev-handson
       runAfter:
         - unit-test
       workspaces:
@@ -106,6 +127,10 @@ spec:
       params:
         - name: IMAGE
           value: "$(params.image-registry)/$(params.image-namespace)/$(params.app-name):$(params.revision)"
+        - name: BUILDER_IMAGE
+          value: $(params.s2i-builder-image)
+        - name: VERSION
+          value: $(params.s2i-builder-tag)
 
     # ---------------------------------------------------------
     # 4. マニフェストリポジトリ取得 
