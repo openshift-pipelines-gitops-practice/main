@@ -1,12 +1,14 @@
 apiVersion: pipelinesascode.tekton.dev/v1alpha1
 kind: Repository
 metadata:
-  name: dev-handson-frontend
-  namespace: dev-handson
+  name: dev-handson-frontend-gitlab
+  namespace: dev-handson-app
 spec:
-  url: "https://github.com/YOUR_ORG/frontend-app"
+  url: "https://gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com/openshift-pipelines-gitops-practice/frontend-app"
   git_provider:
     secret:
-      name: dev-handson-pac-token
-      key:
-        token: token
+      name: "gitlab-webhook-config"
+      key: "provider.token"
+    webhook_secret:
+      name: "gitlab-webhook-config"
+      key: "webhook.secret"

@@ -1,12 +1,14 @@
 apiVersion: pipelinesascode.tekton.dev/v1alpha1
 kind: Repository
 metadata:
-  name: dev-handson-backend
-  namespace: dev-handson
+  name: dev-handson-backend-gitlab
+  namespace: dev-handson-app
 spec:
-  url: "https://github.com/mosuke5/openshift-pipelines-gitops-practice-v2-backend.git"
-  #git_provider:
-  #  secret:
-  #    name: dev-handson-pac-token
-  #    key:
-  #      token: token
+  url: "https://gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com/openshift-pipelines-gitops-practice/backend-app"
+  git_provider:
+    secret:
+      name: "gitlab-webhook-config"
+      key: "provider.token"
+    webhook_secret:
+      name: "gitlab-webhook-config"
+      key: "webhook.secret"

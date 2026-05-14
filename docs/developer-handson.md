@@ -7,6 +7,14 @@
 
 ---
 
+## Step 0. Dev Spaces ワークスペースの起動
+
+Dev Spaces にアクセス後、**Create Workspace** 画面の **Select a Sample** から **Hands-on Development(Java and Node.js)** をクリックしてワークスペースを起動します。
+
+> このサンプルは本ハンズオン用の devfile を参照し、Backend（Java）と Frontend（Node.js）を同じワークスペースで開発する前提です。
+
+---
+
 ## Step 1. 対象アプリケーションの構成理解
 
 ### 1-1. アプリケーションの概要
