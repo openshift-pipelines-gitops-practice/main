@@ -9,11 +9,11 @@ projects:
   - name: frontend-app
     git:
       remotes:
-        origin: https://gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com/openshift-pipelines-gitops-practice/frontend-app.git
+        origin: git@gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com:openshift-pipelines-gitops-practice/frontend-app.git
   - name: backend-app
     git:
       remotes:
-        origin: https://gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com/openshift-pipelines-gitops-practice/backend-app.git
+        origin: git@gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com:openshift-pipelines-gitops-practice/backend-app.git
 components:
   - name: tools
     container:
