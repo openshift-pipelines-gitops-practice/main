@@ -10,6 +10,10 @@ projects:
     git:
       remotes:
         origin: https://github.com/openshift-pipelines-gitops-practice/main
+  - name: frontend
+    git:
+      remotes:
+        origin: https://gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com/openshift-pipelines-gitops-practice/butsuryu-frontend-app.git
 components:
   - name: tools
     container:
