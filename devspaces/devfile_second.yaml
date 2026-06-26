@@ -6,11 +6,11 @@ metadata:
 attributes:
   controller.devfile.io/storage-type: per-workspace
 projects:
-  - name: test
+  - name: frontend-app
     git:
       remotes:
-        origin: https://github.com/openshift-pipelines-gitops-practice/main
-  - name: frontend
+        origin: https://gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com/openshift-pipelines-gitops-practice/butsuryu-frontend-app.git
+  - name: backend-app
     git:
       remotes:
         origin: https://gitlab.apps.cluster-9qtcm.9qtcm.sandbox1494.opentlc.com/openshift-pipelines-gitops-practice/butsuryu-frontend-app.git
@@ -18,7 +18,7 @@ components:
   - name: tools
     container:
       image: image-registry.openshift-image-registry.svc:5000/openshift/udi-rhel9-java25-node24:latest
-      memoryLimit: 4Gi
+      memoryLimit: 6Gi
       mountSources: true
       env:
         - name: JAVA_HOME
